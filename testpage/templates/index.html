@@ -1,0 +1,58 @@
+{% extends 'front/layout_home.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block csspage %}
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
+{% endblock csspage %}
+
+{% block content_header %}
+สอบถามสินค้าคงเหลือ
+{% endblock content_header %}
+
+{% block content_breadcrumb %}
+<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+<li class="active">สอบถามสินค้าคงเหลือ</li>
+{% endblock content_breadcrumb %}
+
+{% block content %}
+
+<h1>test insert</h1>
+{% for data in query1 %}
+<div>{{data.TYPECOD}}</div><div>{{data.TYPEDES}}</div>
+{% endfor %}
+
+<form action="/ins_settype/" method="POST">
+    {% csrf_token %}
+    <input type="text" name="code" id="code">
+    <input type="text" name="desc" id="desc">
+    <input type="submit" class="btn btn-info">
+</form>
+
+
+
+
+{% endblock content %}
+
+
+{% block jspage %}
+
+<!-- DataTables -->
+<script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+<script>
+    $(function () {
+      $('#example1').DataTable()
+      $('#example2').DataTable({
+        'paging'      : true,
+        'lengthChange': false,
+        'searching'   : false,
+        'ordering'    : true,
+        'info'        : true,
+        'autoWidth'   : false
+      })
+    })
+  </script>
+
+{% endblock jspage %}

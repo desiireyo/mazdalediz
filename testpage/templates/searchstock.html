@@ -1,0 +1,120 @@
+{% extends 'theme0/layout_home.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %} Stock {% endblock title %}
+
+{% block csspage %}
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'theme0/plugins/dropify/dropify.min.css' %}"> -->
+<link href="{% static 'theme0/assets/css/users/account-setting.css' %}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="{% static 'theme0/plugins/table/datatable/datatables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'theme0/plugins/table/datatable/dt-global_style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'theme0/plugins/table/datatable/custom_dt_html5.css' %}">
+
+{% endblock csspage %}
+
+{% block content_header %}
+    <h3>Analytics Dashboard</h3>
+{% endblock content_header %}
+
+{% block content %}
+
+<div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+    <form id="general-info" method="POST" class="section general-info">
+        {% csrf_token %}
+        <div class="info">
+            <h6 class="">Search Stock</h6>
+            <div class="row">
+                <div class="col-lg-11 mx-auto">
+                    <div class="row">
+                        <!-- <div class="col-xl-2 col-lg-12 col-md-4">
+                            
+                        </div> -->
+                        <div class="col-xl-12 col-lg-12 col-md-8 mt-md-0 mt-4">
+                            
+                                <div class="input-group mb-4">
+                                <input type="text" class="form-control" id="inpType" name="nmType" placeholder="" aria-label="Recipient's username">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">Search</button>
+                                </div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+    <form id="about" class="section about">
+        <div class="info">
+            <div class="table-responsive mb-4 mt-4">
+                <table id="html5-extension" class="table table-hover non-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ยี่ห้อ</th>
+                            <th>รุ่น</th>
+                            <th>ชื่อรุ่น</th>
+                            <th>สี</th>
+                            <th>คำอธิบายสี</th>
+                            <th>จำนวน</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in datasearch %}
+                        <tr>
+                            <td>{{data.0}}</td>
+                            <td>{{data.1}}</td>
+                            <td>{{data.2}}</td>
+                            <td>{{data.3}}</td>
+                            <td>{{data.4}}</td>
+                            <td>{{data.5}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+{% endblock content %}
+
+
+{% block jspage %}
+<script src="{% static 'theme0/plugins/table/datatable/datatables.js' %}"></script>
+<script src="{% static 'theme0/plugins/table/datatable/button-ext/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'theme0/plugins/table/datatable/button-ext/jszip.min.js' %}"></script>    
+<script src="{% static 'theme0/plugins/table/datatable/button-ext/buttons.html5.min.js' %}"></script>
+<script src="{% static 'theme0/plugins/table/datatable/button-ext/buttons.print.min.js' %}"></script>
+
+<script>
+    $('#html5-extension').DataTable( {
+        dom: '<"row"<"col-md-12"<"row"<"col-md-6"B><"col-md-6"f> > ><"col-md-12"rt> <"col-md-12"<"row"<"col-md-5"i><"col-md-7"p>>> >',
+        buttons: {
+            buttons: [
+                { extend: 'copy', className: 'btn' },
+                { extend: 'csv', className: 'btn' },
+                { extend: 'excel', className: 'btn' },
+                { extend: 'print', className: 'btn' }
+            ]
+        },
+        "oLanguage": {
+            "oPaginate": { "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>', "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' },
+            "sInfo": "Showing page _PAGE_ of _PAGES_",
+            "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+            "sSearchPlaceholder": "Fillter...",
+            "sLengthMenu": "Results :  _MENU_",
+        },
+        "stripeClasses": [],
+        "lengthMenu": [7, 10, 20, 50],
+        "pageLength": 10 
+    });  
+        
+</script>
+
+{% endblock jspage %}

@@ -1,0 +1,737 @@
+{% extends 'theme0/layout_home.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %} Prospect {% endblock title %}
+
+{% block csspage %}
+<!--  BEGIN CUSTOM STYLE FILE  -->
+<link rel="stylesheet" type="text/css" href="{% static 'theme0/plugins/dropify/dropify.min.css' %}">
+<link href="{% static 'theme0/assets/css/users/account-setting.css' %}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="{% static 'theme0/assets/css/forms/theme-checkbox-radio.css' %}">
+<link href="{% static 'theme0/plugins/flatpickr/flatpickr.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'theme0/plugins/flatpickr/custom-flatpickr.css' %}" rel="stylesheet" type="text/css">
+
+<link rel="stylesheet" type="text/css" href="{% static 'theme0/plugins/select2/select2.min.css' %}">
+
+<link href="{% static 'theme0/plugins/sweetalerts/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
+<!--  END CUSTOM STYLE FILE  -->
+
+{% endblock csspage %}
+
+{% block content_header %}
+    <h3>Analytics Dashboard</h3>
+{% endblock content_header %}
+
+{% block content %}
+
+<div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+    <form id="prospectForm" class="section work-experience" method="POST" data-resource="{% url 'ajax_load_resourcemore' %}">
+    {% csrf_token %}
+        <div class="info">
+            <h5>Prospect Detail</h5>
+            <div class="row">
+                
+                <div class="col-md-11 mx-auto">
+
+                    <div class="">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="prospectdt">วันที่ Prospect {{data.PROSPECTDT}}</label>                                                    
+                                                    {% if chkupd == "Y" %}  
+                                                    <input id="prospectdt" name="prospectdt" value="{{updprospect.PROSPECTDT|date:'c'}}" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date.." > 
+                                                    {% else %}
+                                                    <input id="prospectdt" name="prospectdt" value="{% now 'Y-m-d' %}" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date.." > 
+                                                    {% endif %}
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group xx2">
+                                                    <label for="resource">แหล่งที่มา {{updprospect.RESOURCE_id}}</label>
+                                                    <select class="form-control  basic" id="resource" name="resource" >
+                                                        <option value="0" {% if chkupd != 'Y' %} selected {% endif %} disabled>---</option>
+                                                        {% for data in query_resource %}
+                                                        <option value="{{data.id}}" {% if data.id == updprospect.RESOURCE_id %} selected {% endif %}>{{data.NAME}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <div class="alert alert-danger" id="resource_error" style="display:none">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="resourcemore">แหล่งที่มา(เพิ่มเติม)</label>
+                                                    <select class="form-control  basic" id="resourcemore" name="resourcemore">
+                                                        <option value="0" {% if chkupd != 'Y' %} selected {% endif %} disabled>---</option>
+                                                        {% for data in query_resourcemore %}
+                                                        <option value="{{data.CODE}}" {% if data.id == updprospect.RESOURCEMORE_id %} selected {% endif %}>{{data.NAME}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <div class="valid-tooltip">
+                                                        Looks good!
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="sales_consultant">ที่ปรึกษาการขาย </label>
+                                                    <select class="form-control  basic" id="sales_consultant" name="sales_consultant">
+                                                        <option value="" {% if chkupd != 'Y' %} selected {% endif %} disabled>---</option>
+                                                        {% for data in query_office %}
+                                                        <option value="{{data.CODE}}" {% if data.CODE == updprospect.SALES_CONSULTANT_id %} selected {% endif %}>{{data.NAME}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="custnm">ชื่อลูกค้า</label>
+                                                    <input type="text" class="form-control" id="custnm" name="custnm" value="{{updprospect.CUST_NAME}}" autocomplete="off" >
+                                                </div>
+                                                <div class="alert alert-danger" id="firstnm_error" style="display:none">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="tel1">เบอร์โทรศัพท์</label>
+                                                    <input type="text" class="form-control" id="tel1" name="tel1" value="{{updprospect.CUST_TEL1}}" autocomplete="off">
+                                                </div>
+                                                <div class="alert alert-danger" id="tel1_error" style="display:none">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="requirement">ระดับความต้องการ</label>
+                                                    <select class="form-control  basic" id="requirement" name="requirement">
+                                                        <option value="" {% if chkupd != 'Y' %} selected {% endif %} disabled>---</option>
+                                                        {% for data in query_requirement %}
+                                                        <option value="{{data.CODE}}" {% if data.id == updprospect.REQUIREMENT_id %} selected {% endif %}>{{data.NAME}}</option>
+                                                        {% endfor %}                                                        
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="adviser">ผู้แนะนำ</label>
+                                                    <select class="form-control  basic" id="adviser" name="adviser">
+                                                        <option value="" {% if chkupd != 'Y' %} selected {% endif %} disabled>---</option>
+                                                        {% for data in query_custmast %}
+                                                        <option value="{{data.CUSCOD}}" {% if data.CUSCOD == updprospect.ADVISER_id %} selected {% endif %}>{{data.NAME1}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="model">รุ่นรถที่สนใจ</label>
+                                                    <select class="form-control  basic" id="model" name="model">
+                                                        <option value="" {% if chkupd != 'Y' %} selected {% endif %} disabled>---</option>
+                                                        {% for data in query_setmodel %}
+                                                        <option value="{{data.MODELCOD}}" {% if data.MODELCOD == updprospect.MODEL_id %} selected {% endif %}>{{data.MODELDES}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="saleprc">ยอดขาย(%)</label>
+                                                    <input type="text" class="form-control" id="saleprc" name="saleprc" value="{{updprospect.SALES_PRICE}}" >
+                                                    <div class="alert alert-danger" id="saleprc_error" style="display:none">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="status_prospect">สถานะลูกค้าProspect</label>
+                                                    <div class="n-chk">
+                                                        <label class="new-control new-radio new-radio-text radio-success">
+                                                            {% if chkupd != 'Y' %} 
+                                                            <input type="radio" class="new-control-input status_prospect" name="status_prospect" value="A" checked >
+                                                            {% endif %}
+                                                          <input type="radio" class="new-control-input status_prospect" name="status_prospect" value="A" {% if updprospect.STATUS_PROSPECT == 'A' %} checked {% endif %} >
+                                                          <span class="new-control-indicator"></span><span class="new-radio-content">คาดหวัง</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="n-chk">
+                                                        <label class="new-control new-radio new-radio-text radio-success">
+                                                          <input type="radio" class="new-control-input status_prospect" name="status_prospect" value="C" {% if updprospect.STATUS_PROSPECT == 'C' %} checked {% endif %} >
+                                                          <span class="new-control-indicator"></span><span class="new-radio-content">ไม่ติดตาม</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="trace">สถานะติดตาม</label>
+                                                    <select class="form-control  basic" id="trace" name="trace">
+                                                        <option value="" {% if chkupd != 'Y' %} selected {% endif %} disabled>---</option>
+                                                        {% for data in query_trace %}
+                                                        <option value="{{data.CODE}}" {% if data.id == updprospect.TRACE_id %} selected {% endif %}>{{data.NAME}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <!-- <div class="input-group mb-4">
+                                                        <input type="text" class="form-control" placeholder="Notification" aria-label="notification" aria-describedby="basic-addon2">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" id="basic-addon2"><svg class="feather feather-circle" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg></span>
+                                                        </div>
+                                                    </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    
+<!-- </div> -->
+
+<!-- <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing"> -->
+    
+        <div class="info">
+            <h5 class="">Customer Detail</h5>
+            <div class="row">
+                
+                <div class="col-md-11 mx-auto">
+
+                    <div class="">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="firstnm">ชื่อจริงลูกค้า</label>
+                                                    <input type="text" class="form-control mb-4" id="firstnm" name="firstnm" readonly value="{{updprospect.CUST_NAME}}" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="lastnm">นามสกุล</label>
+                                                    <input type="text" class="form-control mb-4" id="lastnm" name="lastnm" value="{{updprospect.CUST_LNAME}}" autocomplete="off">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="custnocard">เลขที่บัตรประชาชน</label>
+                                                    <input type="text" class="form-control mb-4" id="custnocard" name="custnocard" value="{{updprospect.CUST_NOCARD}}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="birthday">วันเกิด</label>
+                                                    <!-- <input type="text" class="form-control mb-4" id="degree3" value=""> -->
+                                                    <input id="birthday" name="birthday" value="{{updprospect.CUST_BIRTHDT|date:'c'}}" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="custemail">Email</label>
+                                                    <input type="text" class="form-control mb-4" id="custemail" name="custemail" value="{{updprospect.CUST_EMAIL}}" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="media">สื่อ</label>
+                                                    <select class="form-control  basic" id="media" name="media">
+                                                        <option value="" {% if chkupd != 'Y' %} selected {% endif %} disabled>---</option>
+                                                        {% for data in query_media %}
+                                                        <option value="{{data.CODE}}" {% if data.id == updprospect.MEDIA_id %} selected {% endif %}>{{data.NAME}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="color">สี</label>
+                                                    <select class="form-control  basic" id="color" name="color">
+                                                        <option value="" {% if chkupd != 'Y' %} selected {% endif %} disabled>---</option>
+                                                        {% for data in query_color %}
+                                                        <option value="{{data.COLORCOD}}" {% if data.COLORCOD == updprospect.COLOR_id %} selected {% endif %}>{{data.COLORDES}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="memo">หมายเหตุ</label>
+                                                    <input type="text" class="form-control mb-4" id="memo" name="memo" value="{{updprospect.MEMO}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row">                                    
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="telphone1">โทรศัพท์ 1</label>
+                                                    <input type="text" class="form-control mb-4" id="telphone1" name="telphone1" readonly value="{{updprospect.CUST_TEL1}}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="telphone2">โทรศัพท์ 2</label>
+                                                    <input type="text" class="form-control mb-4" id="telphone2" name="telphone2" value="{{updprospect.CUST_TEL2}}" autocomplete="off">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="telphone3">โทรศัพท์ 3</label>
+                                                    <input type="text" class="form-control mb-4" id="telphone3" name="telphone3" value="{{updprospect.CUST_TEL3}}" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="customer_cre">สถานะลูกค้า CRE</label>
+                                                    <div class="n-chk">
+                                                        <label class="new-control new-radio new-radio-text radio-success">
+                                                            {% if chkupd != 'Y' %} 
+                                                            <input type="radio" class="new-control-input customer_cre" name="customer_cre" value="A" checked >
+                                                            {% endif %}
+                                                          <input type="radio" class="new-control-input customer_cre" name="customer_cre" value="A" {% if updprospect.STATUS_CRE == 'A' %} checked {% endif %} >
+                                                          <span class="new-control-indicator"></span><span class="new-radio-content">ติดตาม CRE</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="n-chk">
+                                                        <label class="new-control new-radio new-radio-text radio-success">
+                                                          <input type="radio" class="new-control-input customer_cre" name="customer_cre" value="C" {% if updprospect.STATUS_CRE == 'C' %} checked {% endif %}>
+                                                          <span class="new-control-indicator"></span><span class="new-radio-content">ยกเลิกการติดตาม</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row">                                    
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="condition">เงื่อนไขการขาย</label>
+                                                    <select class="form-control basic custom-select xx2" id="condition" name="condition" >
+                                                        <option value="" {% if chkupd != 'Y' %} selected {% endif %} >---</option>
+                                                        {% for data in query_condition %}
+                                                        <option value="{{data.CODE}}" {% if data.id == updprospect.TERM_CONDITION_id %} selected {% endif %}>{{data.NAME}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="receivedt">ประมาณการรับรถ</label>
+                                                    <input id="receivedt" name="receivedt" value="{{updprospect.RECEIVEDT|date:'c'}}" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="matchdt">วันที่ Match</label>
+                                                    <input id="matchdt" name="matchdt" value="{{updprospect.MATCHDT|date:'c'}}" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="deliverydt">วันที่ปล่อย</label>
+                                                    <input id="deliverydt" name="deliverydt" value="{{updprospect.DELIVERYDT|date:'c'}}" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 text-right mb-5">
+                    <!-- <button id="add-work-exp" class="btn btn-primary">บันทึก</button> -->
+                    {% if chkupd == 'Y' %}
+                    <input type="hidden" id="chk_valid" value="0">
+                    <input type="hidden" id="hd_id" value="{{updprospect.id}}">
+                    <button type="button" class="btn btn-info btn-update-data" id="updButton">Update</button>
+                    {% else %}
+                    <button type="button" class="btn btn-info btn-insert-data" id="loginButton">Save</button>
+                    {% endif %}
+                    <!-- <input type="submit" class="btn btn-primary" value="SAVE"> -->
+                </div>
+            </div>
+        </div>
+    
+</form>
+</div>
+
+{% endblock content %}
+
+
+{% block jspage %}
+<!-- <script src="{% static 'theme0/plugins/highlight/highlight.pack.js' %}"></script> -->
+<!-- <script src="{% static 'theme0/assets/js/scrollspyNav.js' %}"></script> -->
+<script src="{% static 'theme0/plugins/flatpickr/flatpickr.js' %}"></script>
+<!-- <script src="{% static 'theme0/plugins/flatpickr/custom-flatpickr.js' %}"></script> -->
+
+<script src="{% static 'theme0/plugins/select2/select2.min.js' %}"></script>
+<!-- <script src="{% static 'theme0/plugins/select2/custom-select2.js' %}"></script> -->
+
+<!-- <script src="{% static 'theme0/assets/js/forms/bootstrap_validation/bs_validation_script.js' %}"></script> -->
+
+<script src="{% static 'theme0/plugins/sweetalerts/sweetalert2.min.js' %}"></script>
+
+<script>
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+    // flatpickr("#myID", {});
+    var prospectdt = flatpickr(document.getElementById('prospectdt',{
+        dateFormat: "Y-m-d",
+        defaultDate: "today"
+    }));
+    var birthday = flatpickr(document.getElementById('birthday'));
+    var receivedt = flatpickr(document.getElementById('receivedt'));
+    var matchdt = flatpickr(document.getElementById('matchdt'));
+    var deliverydt = flatpickr(document.getElementById('deliverydt'));
+
+    //select2
+    var ss = $(".basic").select2({
+        tags: true,
+    });
+
+    $("#custnm").keyup(function(){
+        var name = $(this).val();
+        // console.log(name);
+        $("#firstnm").val(name);
+    });
+    $("#tel1").keyup(function(){
+        var name = $(this).val();
+        // console.log(name);
+        $("#telphone1").val(name);
+    });
+
+    $("#resource").change(function () {
+        var url = $("#prospectForm").attr("data-resource");
+        var resourceId = $(this).val();
+        //   console.log(resourceId);    
+ 
+        $.ajax({
+            url: url,
+            data: {
+                'resource': resourceId
+            },
+            success: function (data) {
+                $("#resourcemore").html(data);
+            }
+        });
+ 
+    });
+
+    $(".btn-insert-data").click(function(){
+        var prospectdt=$("#prospectdt").val();
+        var resource = $("#resource").val();
+        var resourcemore = $("#resourcemore").val();
+        var sales_consultant = $("#sales_consultant").val();
+        var firstnm = $("#firstnm").val();
+        var lastnm = $("#lastnm").val();
+        var tel1 = $("#tel1").val();
+        var telphone1 = $("#telphone1").val();
+        var telphone2 = $("#telphone2").val();
+        var telphone3 = $("#telphone3").val();
+        var custnocard = $("#custnocard").val();
+        var birthday = $("#birthday").val();
+        var custemail = $("#custemail").val();
+        var requirement = $("#requirement").val();
+        var adviser = $("#adviser").val();
+        var model = $("#model").val();
+        var saleprc = $("#saleprc").val();
+        var status_prospect = $(".status_prospect:checked").val();
+        var trace = $("#trace").val();
+        var media = $("#media").val();
+        var color = $("#color").val();
+        var memo = $("#memo").val();
+        var customer_cre = $(".customer_cre:checked").val();
+        var condition = $("#condition").val();
+        var receivedt = $("#receivedt").val();
+        var matchdt = $("#matchdt").val();
+        var deliverydt = $("#deliverydt").val();        
+        // console.log('status_prospect:',status_prospect);        
+
+        if(firstnm==""){
+            $("#firstnm_error").text("Please Enter Name");
+            $("#firstnm_error").show();
+            var chk_valid = 1;
+            return;
+        }else{
+            $("#firstnm_error").hide();
+            var chk_valid = 0;
+        }
+
+        if(tel1 == ""){
+            $("#tel1_error").text("Please select");
+            $("#tel1_error").show();
+            var chk_valid = 1;
+            return;
+        }else{
+            $("#tel1_error").hide();
+            var chk_valid = 0;            
+        }
+
+        if(saleprc == ""){
+            $("#saleprc_error").text("โปรดระบุ");
+            $("#saleprc_error").show();
+            var chk_valid = 1;
+            return;
+        }else{
+            $("#saleprc_error").hide();
+            var chk_valid = 0;
+        }
+
+        
+
+        if(chk_valid == 0){
+            console.log('yy');
+            $.ajax({
+                url:"{% url 'save_prospect' %}",
+                type:'POST',
+                data:{
+                    'prospectdt': prospectdt,
+                    'resource': resource,
+                    'resourcemore': resourcemore,
+                    'sales_consultant': sales_consultant,
+                    'firstnm': firstnm,
+                    'lastnm': lastnm,
+                    'telphone1': telphone1,
+                    'telphone2': telphone2,
+                    'telphone3': telphone3,
+                    'custnocard': custnocard,
+                    'birthday': birthday,
+                    'custemail': custemail,
+                    'requirement': requirement,
+                    'adviser': adviser,
+                    'model': model,
+                    'saleprc': saleprc,
+                    'status_prospect': status_prospect,
+                    'trace': trace,
+                    'media': media,
+                    'color': color,
+                    'memo': memo,
+                    'customer_cre': customer_cre,
+                    'condition': condition,
+                    'receivedt': receivedt,
+                    'matchdt': matchdt,
+                    'deliverydt': deliverydt,
+                    
+                },
+                success: function (data) {
+                    // console.log(data);
+                    // console.log('success');
+                    showM();
+                }
+            });
+        }else{
+            console.log('value is null');
+        }
+    });
+
+    $(".btn-update-data").click(function(){
+        var chk_valid = $("#chk_valid").val();
+        var prospectdt=$("#prospectdt").val();
+        var resource = $("#resource").val();
+        var resourcemore = $("#resourcemore").val();
+        var sales_consultant = $("#sales_consultant").val();
+        var firstnm = $("#firstnm").val();
+        var lastnm = $("#lastnm").val();
+        var tel1 = $("#tel1").val();
+        var telphone1 = $("#telphone1").val();
+        var telphone2 = $("#telphone2").val();
+        var telphone3 = $("#telphone3").val();
+        var custnocard = $("#custnocard").val();
+        var birthday = $("#birthday").val();
+        var custemail = $("#custemail").val();
+        var requirement = $("#requirement").val();
+        var adviser = $("#adviser").val();
+        var model = $("#model").val();
+        var saleprc = $("#saleprc").val();
+        var status_prospect = $(".status_prospect:checked").val();
+        var trace = $("#trace").val();
+        var media = $("#media").val();
+        var color = $("#color").val();
+        var memo = $("#memo").val();
+        var customer_cre = $(".customer_cre:checked").val();
+        var condition = $("#condition").val();
+        var receivedt = $("#receivedt").val();
+        var matchdt = $("#matchdt").val();
+        var deliverydt = $("#deliverydt").val();        
+        console.log('firstnm:',firstnm);        
+
+        if(firstnm==""){
+            $("#firstnm_error").text("Please Enter Name");
+            $("#firstnm_error").show();
+            var chk_valid = 1;
+            return;
+        }else{
+            $("#firstnm_error").hide();
+            var chk_valid = 0;
+        }
+
+        if(tel1 == ""){
+            $("#tel1_error").text("Please select");
+            $("#tel1_error").show();
+            var chk_valid = 1;
+            return;
+        }else{
+            $("#tel1_error").hide();
+            var chk_valid = 0;            
+        }
+
+        if(saleprc == ""){
+            $("#saleprc_error").text("โปรดระบุ");
+            $("#saleprc_error").show();
+            var chk_valid = 1;
+            return;
+        }else{
+            $("#saleprc_error").hide();
+            var chk_valid = 0;
+        }
+
+        var updid = $("#hd_id").val();
+        var updurl = "{% url 'prospect_update' 0 %}".replace('0', updid);
+
+        if(chk_valid == 0){
+            console.log('yy');
+            $.ajax({
+                url: updurl,
+                type:'POST',
+                data:{
+                    'prospectdt': prospectdt,
+                    'resource': resource,
+                    'resourcemore': resourcemore,
+                    'sales_consultant': sales_consultant,
+                    'firstnm': firstnm,
+                    'lastnm': lastnm,
+                    'telphone1': telphone1,
+                    'telphone2': telphone2,
+                    'telphone3': telphone3,
+                    'custnocard': custnocard,
+                    'birthday': birthday,
+                    'custemail': custemail,
+                    'requirement': requirement,
+                    'adviser': adviser,
+                    'model': model,
+                    'saleprc': saleprc,
+                    'status_prospect': status_prospect,
+                    'trace': trace,
+                    'media': media,
+                    'color': color,
+                    'memo': memo,
+                    'customer_cre': customer_cre,
+                    'condition': condition,
+                    'receivedt': receivedt,
+                    'matchdt': matchdt,
+                    'deliverydt': deliverydt,
+
+                },
+                success: function (data) {
+                    // console.log(data);
+                    // console.log('success');
+                    showM();
+                }
+            });
+        }else{
+            console.log('value is null');
+        }
+    });
+
+    function showM(){
+        swal({
+            title: 'Good job!',
+            text: "You clicked the!",
+            type: 'success',
+            padding: '2em'
+        });
+        window.location.href = "{% url 'index_view' %}";
+    }
+    
+
+
+        
+</script>
+
+{% endblock jspage %}

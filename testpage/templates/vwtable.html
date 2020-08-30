@@ -1,0 +1,112 @@
+{% extends 'theme0/layout_home.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %} Prospect list {% endblock title %}
+
+{% block csspage %}
+<!-- BEGIN PAGE LEVEL STYLES -->
+<link rel="stylesheet" type="text/css" href="{% static 'theme0/plugins/table/datatable/datatables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'theme0/plugins/table/datatable/dt-global_style.css' %}">
+<!-- END PAGE LEVEL STYLES -->
+{% endblock csspage %}
+
+{% block content_header %}
+    <h3>table</h3>
+{% endblock content_header %}
+
+{% block content %}
+
+<div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
+    <div class="widget-content widget-content-area br-6">
+        <div class="table-responsive mb-4 mt-4">
+            <table id="zero-config" class="table table-hover non-hover" style="width:100%">
+            <!-- <table id="zero-config" class="table table-hover" style="width:100%"> -->
+                <thead>
+                    <tr>
+                        <th>วันที่ prospect</th>
+                        <th>ชื่อ-นามสกุล</th>
+                        <th>เบอร์โทร</th>
+                        <th>สถานะลูกค้า Prospect</th>
+                        <th>สถานะ CRE</th>
+                        <th>ระดับความต้องการ</th>
+                        <th class="no-content"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in query_prospect %}
+                    <tr>
+                        <td>{{data.PROSPECTDT}}</td>
+                        <td>{{data.CUST_NAME}} {{data.CUST_LNAME}}</td>
+                        <td>{{data.CUST_TEL1}}</td>
+                        {% if data.STATUS_PROSPECT == 'A' %}
+                        <td>คาดหวัง</td>
+                        {% else %}
+                        <td>-</td>
+                        {% endif %}
+                        {% if data.STATUS_CRE == 'A' %}
+                        <td>ติดตาม</td>
+                        {% else %}
+                        <td>-</td>
+                        {% endif %}
+                        <td>{{data.REQUIREMENT}}</td>
+                        <td>
+                            <div class="btn-group">
+                                <!-- <button type="button" class="btn btn-dark btn-sm">Open</button> -->
+                                <a class="btn btn-dark btn-sm" href="{% url 'prospect_edit' data.id %}">Edit</a>
+                                <div>&nbsp;</div>
+                                <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#exampleModalCenter-{{data.id}}">
+                                    Delete
+                                </button>
+                                
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% for data in query_prospect %}
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter-{{data.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">ยืนยันการลบรายการ</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-text">{{data.CUST_NAME}} {{data.CUST_LNAME}}</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal"><i class="flaticon-cancel-12"></i> Discard</button>
+                <!-- <button type="button" class="btn btn-primary">Delete</button> -->
+                <a class="btn btn-dark btn-sm" href="{% url 'prospect_delete' data.id %}">Delete</a>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endfor %}
+
+{% endblock content %}
+
+
+{% block jspage %}
+
+<script src="{% static 'theme0/plugins/table/datatable/datatables.js' %}"></script>
+
+<script>
+    $('#zero-config').DataTable({
+        "ordering": false,
+    });    
+        
+</script>
+
+{% endblock jspage %}
